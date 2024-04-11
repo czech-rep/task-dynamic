@@ -83,10 +83,7 @@ class TableView(viewsets.ModelViewSet):
     @decorators.action(methods=['get'], detail=True, url_path='rows')
     def fetch_dynamic(self, request, pk=None):
         model = table_build.get_model(self.get_object())
+        serializer_class = dynamic_serializer_factory(model)
 
-        # serialize
-
-        # return
-
-# POST        /api/table/:id/row
-# GET         /api/table/:id/rows
+        serializer = serializer_class(model.objects.all(), many=True)
+        return response.Response(serializer.data)
