@@ -7,13 +7,17 @@ class FieldSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Field
-        fields = ['name', 'field_type']
+        fields = ['name', 'field_type', 'default_string', 'default_number', 'default_boolean']
 
-
-# class SimpleTable(serializers.ModelSerializer):
-#     class Meta:
-#         model = Table
-#         fields = '__all__'
+    def to_internal_value(self, data):
+        match data['field_type']:
+            case Field.FieldType.string:
+                data['default_string'] = data.get('default')
+            case Field.FieldType.number:
+                data['default_number'] = data.get('default')
+            case Field.FieldType.boolean:
+                data['default_boolean'] = data.get('default')
+        return super().to_internal_value(data)
 
 
 class TableSerializer(serializers.ModelSerializer):

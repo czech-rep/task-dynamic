@@ -12,13 +12,17 @@ def field_instance(field_attrs: dict):
     if 'default' not in field_attrs:
         field_attrs['null'] = True
 
-    match field_attrs.pop('field_type'):
+    field_type = field_attrs.pop('field_type')
+
+    match field_type:
         case Field.FieldType.string:
             field = models.CharField(**field_attrs)
         case Field.FieldType.number:
             field = models.IntegerField(**field_attrs)
-        case Field.FieldType.boolen:
+        case Field.FieldType.boolean:
             field = models.BooleanField(**field_attrs)
+        case _:
+            raise ValueError(f'{field_type} not handled')
 
     field.column = field.db_column
     return field
