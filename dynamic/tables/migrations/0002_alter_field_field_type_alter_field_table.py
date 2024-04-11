@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='field',
             name='field_type',
-            field=models.SmallIntegerField(choices=[(0, 'string'), (1, 'number'), (2, 'boolen')]),
+            field=models.SmallIntegerField(choices=[(0, 'string'), (1, 'number'), (2, 'boolean')]),
         ),
         migrations.AlterField(
             model_name='field',

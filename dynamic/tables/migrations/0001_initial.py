@@ -24,7 +24,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField()),
-                ('field_type', models.SmallIntegerField(choices=[(0, 'String'), (1, 'Number'), (2, 'Boolen')])),
+                ('field_type', models.SmallIntegerField(choices=[(0, 'String'), (1, 'Number'), (2, 'boolean')])),
                 ('table', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='tables.table')),
             ],
         ),
