@@ -1,0 +1,60 @@
+Recruitment task description
+The goal is to build a simple backend for a table builder app, where the user can build tables
+dynamically. The app has the following endpoints:
+
+Request     type        Endpoint Action
+POST        /api/table  Generate dynamic Django model based on user
+                        provided fields types and titles. The field type can be
+                        a string, number, or Boolean. HINT: you can use
+                        Python type function to generate models on the fly
+                        and the schema editor to make schema changes just
+                        like the migrations
+PUT         /api/table/:id  This end point allows the user to update the structure
+                            of dynamically generated model.
+POST        /api/table/:id/row      Allows the user to add rows to the dynamically
+                                    generated model while respecting the model schema
+GET         /api/table/:id/rows         Get all the rows in the dynamically generated model
+
+Requirements:
+- You must build this app with Django.
+- All API calls should be handled by the Django REST framework.
+- You must use Postgres as DB backend.
+- Write clean and Organized code.
+- Nice to have docker and docker-compose to put all inside containers
+- Nice to have swagger or redoc
+- Nice to have tests
+
+You will be judge on:
+- Code quality
+- Organization and structure
+- Following best practices on handling APIs
+- Error handling
+
+After completing the task push your code to a GitHub repository and
+provide a link to it.
+
+So, if we can post like:
+{
+  "name": "table9",
+  "fields": [
+    {
+      "name": "name",
+      "default": "anomim",
+      "field_type": 1
+    },
+    {
+      "name": "age",
+      "field_type": "2"    }
+  ]
+}
+
+then PUT accepts the same payload but have to edit in-place this table. Possible:
+- change table name
+- add field - it fill be not required
+- remove field - if its missing
+- change field type
+- change of field name is impossible
+
+looks like all fields will not be required, bc otherwise modification of table would require a default
+// or: if default if provided, field will use it
+FIRST lets create all as not required
