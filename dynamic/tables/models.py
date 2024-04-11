@@ -26,6 +26,7 @@ class Field(models.Model):
 
     class Meta:
         db_table = 'table_fields'
+        # TODO unique together: field name and table
 
     def fmt(self):
         return {

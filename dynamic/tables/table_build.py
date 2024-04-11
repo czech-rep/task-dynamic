@@ -64,7 +64,7 @@ def get_changes(m1, m2):
 
     for new_field in m2['fields'].keys() - m1['fields'].keys():
         field_data = m2['fields'][new_field]
-        yield 'add_field', field_instance(field)
+        yield 'add_field', field_instance(field_data)
 
     for removed_field in m1['fields'].keys() - m2['fields'].keys():
         field_data = m1['fields'][removed_field]
@@ -75,8 +75,6 @@ def get_changes(m1, m2):
         field_new = m2['fields'][common_field]
         if field_old != field_new:
             yield 'alter_field', field_instance(field_old), field_instance(field_new)
-
-    # how to compare? does serializer when update provide any diff?
 
 
 def alter_table(model ,changes):

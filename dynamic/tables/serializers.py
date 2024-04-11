@@ -24,6 +24,9 @@ class TableSerializer(serializers.ModelSerializer):
         fields = ['name', 'fields']
 
     def validate(self, attrs):
+        if any(field['name'] == 'id' for field in attrs['fields']):
+            raise serializers.ValidationError({'fields': 'forbidden name "id"'})
+
         if len(set(field['name'] for field in attrs['fields'])) != len(attrs['fields']):
             raise serializers.ValidationError({'fields': 'non unique field names'})
         return attrs
@@ -33,7 +36,6 @@ class TableSerializer(serializers.ModelSerializer):
             Field.objects.create(table=table, **field_data)
 
     def create(self, validated_data):
-        print('create---')
         fields_data = validated_data.pop('fields')
         table = Table.objects.create(**validated_data)
 
@@ -42,7 +44,7 @@ class TableSerializer(serializers.ModelSerializer):
         return table
 
     def update(self, instance, validated_data):
-        # we could update these objects, but uts easier to
+        # we could update these objects, but its easier to
         # instance.objects.delete()
         instance.fields.all().delete()
 
