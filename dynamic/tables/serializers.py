@@ -21,7 +21,7 @@ class TableSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Table
-        fields = ['name', 'fields']
+        fields = ['id', 'name', 'fields']
 
     def validate(self, attrs):
         if any(field['name'] == 'id' for field in attrs['fields']):
@@ -44,9 +44,7 @@ class TableSerializer(serializers.ModelSerializer):
         return table
 
     def update(self, instance, validated_data):
-        # we could update these objects, but its easier to
-        # instance.objects.delete()
-        instance.fields.all().delete()
+        instance.fields.all().delete()  # we could update these objects, but its easier to delete
 
         fields_data = validated_data.pop('fields')
         self.create_fields(instance, fields_data)
@@ -54,6 +52,13 @@ class TableSerializer(serializers.ModelSerializer):
         return super().update(instance, validated_data)
 
 
+def dynamic_serializer_factory(model_):
+    class Meta:
+        model = model_
+        fields = '__all__'
 
-
-# what with update?
+    return type(
+        model_.__name__ + 'Serializer',
+        (serializers.ModelSerializer, ),
+        {'Meta': Meta},
+    )

@@ -1,7 +1,7 @@
-from rest_framework import views, viewsets, response, status
+from rest_framework import views, viewsets, response, status, decorators
 
 from tables.models import Table, Field
-from tables.serializers import TableSerializer
+from tables.serializers import TableSerializer, dynamic_serializer_factory
 from tables import table_build
 
 
@@ -32,7 +32,7 @@ class TableView(viewsets.ModelViewSet):
         model = table_build.get_model(table)
         table_build.create_table(model)
 
-        return response.Response(status=status.HTTP_201_CREATED)
+        return response.Response(serializer.data, status=status.HTTP_201_CREATED)
 
         # from django.db.models.loading import cache
         # try:
@@ -66,3 +66,27 @@ class TableView(viewsets.ModelViewSet):
         )
 
         return response.Response(serializer.data)
+
+    @decorators.action(methods=['post'], detail=True, url_path='row')
+    def add_dynamic(self, request, pk=None):
+        model = table_build.get_model(self.get_object())
+        serializer_class = dynamic_serializer_factory(model)
+
+        serializer = serializer_class(data=request.data)
+        if not serializer.is_valid():
+            return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        serializer.save()
+        print(serializer.data)
+        return response.Response()
+
+    @decorators.action(methods=['get'], detail=True, url_path='rows')
+    def fetch_dynamic(self, request, pk=None):
+        model = table_build.get_model(self.get_object())
+
+        # serialize
+
+        # return
+
+# POST        /api/table/:id/row
+# GET         /api/table/:id/rows
