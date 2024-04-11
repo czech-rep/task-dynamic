@@ -28,27 +28,18 @@ def field_instance(field_attrs: dict):
     return field
 
 
-def custom_table_name(name):
-    return f'dynamic_table_{name}'
-
-
 def get_model(table):
     attrs = {field.name: field_instance(field.fmt()) for field in table.fields.all()}
 
-    # class Meta:
-    #     abstract = False
-    #     db_table = custom_table_name(table.name)
-
-    # attrs['_meta'] = Meta
     attrs['__module__'] = 'tables.models'
 
     model = type(
-        custom_table_name(table.name),
+        table.name,
         (models.Model, ),
         attrs,
     )
 
-    model._meta.db_table = custom_table_name(table.name)
+    model._meta.db_table = table.name
 
     return model
 
@@ -62,8 +53,9 @@ def get_changes(m1, m2):
     # - remove field - if its missing
     # - change field type - This includes changing the name of the column (the db_column attribute), changing the type of the field (if the field class changes),
     # - change of field name is impossible
-    if m1['name'] != m2['name']:
-        yield 'alter_db_table', custom_table_name(m1['name']), custom_table_name(m2['name']) # here real names
+
+    # if m1['name'] != m2['name']:
+        # yield 'alter_db_table', custom_table_name(m1['name']), custom_table_name(m2['name']) # here real names
         # alter_db_table_comment(model, old_db_table_comment, new_db_table_comment)
 
     for new_field in m2['fields'].keys() - m1['fields'].keys():
@@ -85,8 +77,6 @@ def alter_table(model ,changes):
     with connection.schema_editor() as editor:
         for change, *args in changes:
             match change:
-                case 'alter_db_table':
-                    editor.alter_db_table(model, *args)
                 case 'add_field':
                     editor.add_field(model, *args)
                 case 'remove_field':

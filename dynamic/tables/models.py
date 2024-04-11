@@ -2,14 +2,16 @@ from django.db import models
 
 
 class Table(models.Model):
-    name = models.CharField(unique=True)
-
     class Meta:
-        verbose_name = 'TableData'
+        pass
+
+    @property
+    def name(self):
+        return 'dynamic_table_' + str(self.id).zfill(3)
+
 
     def compare_format(self):
         return {
-            'name': self.name,
             'fields': {field.name: field.fmt() for field in self.fields.all()},
         }
 
@@ -40,7 +42,6 @@ class Field(models.Model):
         }
 
     def get_default(self):
-        print(self.field_type)
         if self.field_type == self.FieldType.string:
             return self.default_string
         elif self.field_type == self.FieldType.number:
@@ -48,12 +49,4 @@ class Field(models.Model):
         elif self.field_type == self.FieldType.boolean:
             return self.default_boolean
         else:
-            return None # never happens ;)
-        # if self.default_number is not None:
-        #     return self.default_number
-        # elif self.default_string is not None:
-        #     return self.default_string
-        # elif self.default_boolean is not None:
-        #     return self.default_boolean
-        # else:
-        #     return None
+            raise ValueError(f'unhandled {self.field_type}')

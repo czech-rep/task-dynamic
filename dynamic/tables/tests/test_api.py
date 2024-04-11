@@ -10,7 +10,6 @@ class TestCreateTable(TestCase):
         response = self.client.post(
             path='/api/table/',
             data={
-                'name': 'test_table_1',
                 'fields': [
                     {
                         'name': 'name',
@@ -33,14 +32,12 @@ class TestCreateTable(TestCase):
         new_model = Table.objects.first()
 
         self.assertIsNotNone(new_model)
-        self.assertEqual(new_model.name, 'test_table_1')
         self.assertEqual(response_json['id'], new_model.id)
 
     # def test_create(self):
     #     response = self.client.post(
     #         '/api/table',
     #         data={
-    #             'name': 'People',
     #             'fields': {
     #                 'name': 'string',
     #                 'age': 'number',
@@ -65,7 +62,7 @@ class TestCreateTable(TestCase):
 class TestUpdateTable(TestCase):
     def setUp(self):
         self.table_name = 'test_table'
-        self.table = Table.objects.create(name=self.table_name)
+        self.table = Table.objects.create()
         self.field = Field.objects.create(
             table=self.table,
             name='name',
@@ -84,7 +81,6 @@ class TestUpdateTable(TestCase):
         response = self.client.put(
             path=f'/api/table/{self.table.id}/',
             data={
-                'name': 'new_name',
                 'fields': [
                     {
                         'name': 'name',
@@ -130,7 +126,6 @@ class TestUpdateTable(TestCase):
         response = self.client.put(
             path=f'/api/table/{self.table.id}/',
             data={
-                'name': 'new_name',
                 'fields': [
                     {
                         'name': 'name',
@@ -178,7 +173,6 @@ class TestUpdateTable(TestCase):
         response = self.client.put(
             path=f'/api/table/{self.table.id}/',
             data={
-                'name': 'new_name',
                 'fields': [
                     {
                         'name': 'name',
