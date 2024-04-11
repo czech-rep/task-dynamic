@@ -42,6 +42,7 @@ class Field(models.Model):
         }
 
     def get_default(self):
+        """If this returns None, it means that fiels will be mandatory"""
         if self.field_type == self.FieldType.string:
             return self.default_string
         elif self.field_type == self.FieldType.number:

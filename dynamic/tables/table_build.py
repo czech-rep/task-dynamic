@@ -9,7 +9,7 @@ from tables.models import Table, Field
 def field_instance(field_attrs: dict):
     """based on fmt() dict"""
 
-    if 'default' not in field_attrs:
+    if field_attrs['default'] is None:
         field_attrs['null'] = True
 
     field_type = field_attrs.pop('field_type')
