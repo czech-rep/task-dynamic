@@ -50,18 +50,21 @@ class TableView(viewsets.ModelViewSet):
         if not serializer.is_valid():
             return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        table_before = table.compare_format()
+        model_before = table_build.get_model(table)
 
         serializer.save()
 
         table.refresh_from_db()
-        table_after = table.compare_format()
+        model_after = table_build.get_model(table)
 
-        changes=list(table_build.get_changes(table_before, table_after))
+        models_fields = lambda model: {field.name: field for field in model._meta.fields}
+
+        changes=list(table_build.get_changes(models_fields(model_before), models_fields(model_after)))
         print(changes)
 
         table_build.alter_table(
-            model=table_build.get_model(table),
+            model=model_after,
+            # model=table_build.get_model(table),
             changes=changes,
         )
 
@@ -77,7 +80,6 @@ class TableView(viewsets.ModelViewSet):
             return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         serializer.save()
-        print(serializer.data)
         return response.Response()
 
     @decorators.action(methods=['get'], detail=True, url_path='rows')

@@ -9,7 +9,6 @@ class Table(models.Model):
     def name(self):
         return 'dynamic_table_' + str(self.id).zfill(3)
 
-
     def compare_format(self):
         return {
             'fields': {field.name: field.fmt() for field in self.fields.all()},
@@ -37,6 +36,7 @@ class Field(models.Model):
     def fmt(self):
         return {
             'db_column': self.name,
+            'name': self.name,
             'field_type': self.field_type,
             'default': self.get_default(),
         }

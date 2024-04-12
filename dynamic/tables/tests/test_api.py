@@ -401,6 +401,10 @@ class TestUpdateTable(TestCase):
 
         self._post_small_payloads()
 
+        response = self.client.get(path=f'/api/table/{self.table.id}/rows/')
+        response_content = json.loads(response.content)
+        self.assertTrue(all(elem[new_field_name] is None for elem in response_content))
+
         # Change default
         response = self.client.put(
             path=f'/api/table/{self.table.id}/',
@@ -429,11 +433,8 @@ class TestUpdateTable(TestCase):
 
         self.assertGreater(len(response_content), 0)
         self.assertTrue(all(new_field_name in elem for elem in response_content))
-        self.assertEqual(
-            sum(1 for elem in response_content if elem[new_field_name] is None),
-            sum(1 for elem in response_content if elem[new_field_name] == default_value),
-            response_content
-        )
+        self.assertTrue(all(elem[new_field_name] is default_value for elem in response_content))
+
 
 class TestRemoveTableFields(TestCase):
     example_payloads = [

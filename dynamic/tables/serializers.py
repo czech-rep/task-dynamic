@@ -66,3 +66,8 @@ def dynamic_serializer_factory(model_):
         (serializers.ModelSerializer, ),
         {'Meta': Meta},
     )
+
+        # unknown =  self.initial_data.keys() - self.fields.keys()
+        # if unknown:
+        #     raise ValidationError("Unknown field(s): {}".format(", ".join(unknown)))
+        # return attrs
