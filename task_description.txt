@@ -32,29 +32,3 @@ You will be judge on:
 
 After completing the task push your code to a GitHub repository and
 provide a link to it.
-
-So, if we can post like:
-{
-  "name": "table9",
-  "fields": [
-    {
-      "name": "name",
-      "default": "anomim",
-      "field_type": 1
-    },
-    {
-      "name": "age",
-      "field_type": "2"    }
-  ]
-}
-
-then PUT accepts the same payload but have to edit in-place this table. Possible:
-- change table name
-- add field - it fill be not required
-- remove field - if its missing
-- change field type
-- change of field name is impossible
-
-looks like all fields will not be required, bc otherwise modification of table would require a default
-// or: if default if provided, field will use it
-FIRST lets create all as not required
