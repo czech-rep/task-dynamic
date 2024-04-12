@@ -22,6 +22,7 @@ def get_model_changes(model_before, model_after):
         # Here compare for changes to be handled
         # null
         # default - but this change is only in django model, not in db
+        # TODO could handle index, verbose name, unique...
         if (
             field_old.null != field_new.null
             or field_old.default != field_new.default

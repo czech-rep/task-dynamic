@@ -33,30 +33,6 @@ class TestCreateTable(TestCase):
         self.assertIsNotNone(new_model)
         self.assertEqual(response_json['id'], new_model.id)
 
-    # def test_create(self):
-    #     response = self.client.post(
-    #         '/api/table',
-    #         data={
-    #             'fields': {
-    #                 'name': 'string',
-    #                 'age': 'number',
-    #             }
-    #         },
-    #     )
-
-    #     self.assertLess(response.status_code, 400)
-    #     new_model = Table.objects.first()
-
-    #     self.assertIsNotNone(new_model)
-    #     self.assertEqual(new_model.name, 'People')
-        # self.assertEqual(new_model.name, 'People')
-
-
-    # def test_update_table(self):
-    #     pass
-
-# class TestEmptyTable(TestCase):
-
 
 class TestUpdateTable(TestCase):
     def setUp(self):
@@ -74,7 +50,7 @@ class TestUpdateTable(TestCase):
         self.table.refresh_from_db()
         table_build.remove_table(self.table.get_model())
 
-    def _post_small_payloads(self):
+    def _post_anemic_payloads(self):
         response = self.client.post(
             path=f'/api/table/{self.table.id}/row/',
             data={'name': 'Mark'},
@@ -157,7 +133,7 @@ class TestUpdateTable(TestCase):
         )
         self.assertLess(response.status_code, 400)
 
-        self._post_small_payloads()
+        self._post_anemic_payloads()
 
         response = self.client.get(path=f'/api/table/{self.table.id}/rows/')
         response_content = json.loads(response.content)
@@ -189,7 +165,7 @@ class TestUpdateTable(TestCase):
         )
         self.assertLess(response.status_code, 400)
 
-        self._post_small_payloads()
+        self._post_anemic_payloads()
 
         response = self.client.put(
             path=f'/api/table/{self.table.id}/',
@@ -210,7 +186,7 @@ class TestUpdateTable(TestCase):
         )
         self.assertLess(response.status_code, 400)
 
-        self._post_small_payloads()
+        self._post_anemic_payloads()
 
         response = self.client.get(path=f'/api/table/{self.table.id}/rows/')
         response_content = json.loads(response.content)
@@ -244,7 +220,7 @@ class TestUpdateTable(TestCase):
         )
         self.assertLess(response.status_code, 400)
 
-        self._post_small_payloads()
+        self._post_anemic_payloads()
 
         response = self.client.get(path=f'/api/table/{self.table.id}/rows/')
         response_content = json.loads(response.content)
@@ -275,7 +251,7 @@ class TestUpdateTable(TestCase):
         )
         self.assertLess(response.status_code, 400)
 
-        self._post_small_payloads()
+        self._post_anemic_payloads()
 
         response = self.client.get(path=f'/api/table/{self.table.id}/rows/')
         response_content = json.loads(response.content)
@@ -304,7 +280,7 @@ class TestUpdateTable(TestCase):
         )
         self.assertLess(response.status_code, 400)
 
-        self._post_small_payloads()
+        self._post_anemic_payloads()
 
         response = self.client.get(path=f'/api/table/{self.table.id}/rows/')
         response_content = json.loads(response.content)
@@ -336,7 +312,7 @@ class TestUpdateTable(TestCase):
         )
         self.assertLess(response.status_code, 400, response.content)
 
-        self._post_small_payloads()
+        self._post_anemic_payloads()
 
         response = self.client.get(path=f'/api/table/{self.table.id}/rows/')
         response_content = json.loads(response.content)
@@ -367,7 +343,7 @@ class TestUpdateTable(TestCase):
         )
         self.assertLess(response.status_code, 400, response.content)
 
-        self._post_small_payloads()
+        self._post_anemic_payloads()
 
         response = self.client.get(path=f'/api/table/{self.table.id}/rows/')
         response_content = json.loads(response.content)
@@ -398,7 +374,7 @@ class TestUpdateTable(TestCase):
         )
         self.assertLess(response.status_code, 400, response.content)
 
-        self._post_small_payloads()
+        self._post_anemic_payloads()
 
         response = self.client.get(path=f'/api/table/{self.table.id}/rows/')
         response_content = json.loads(response.content)
@@ -432,8 +408,8 @@ class TestUpdateTable(TestCase):
         self.assertTrue(all(new_field_name in elem for elem in response_content))
         self.assertTrue(all(elem[new_field_name] == default_value for elem in response_content), response_content)
 
-        self._post_small_payloads()
-        self._post_small_payloads()
+        self._post_anemic_payloads()
+        self._post_anemic_payloads()
 
         response = self.client.get(path=f'/api/table/{self.table.id}/rows/')
         response_content = json.loads(response.content)
@@ -448,9 +424,9 @@ class TestUpdateTable(TestCase):
 class TestRemoveTableFields(TestCase):
     example_payloads = [
         {'name': 'Sam', 'age': 25, 'married': True},
-        {'name': 'George', 'age': 25, 'married': True},
+        {'name': 'George', 'age': 35, 'married': True},
         {'name': 'Stacy', 'age': 25, 'married': False},
-        {'name': 'Len', 'age': 25},
+        {'name': 'Len', 'age': 45},
         {'name': 'Foo', 'married': False},
         {'name': 'Ann'},
     ]
@@ -479,7 +455,6 @@ class TestRemoveTableFields(TestCase):
             data=self.table_payload,
             content_type="application/json",
         )  # First build complete table
-
         self.assertLess(response.status_code, 400)
 
         response_json = json.loads(response.content)
@@ -532,7 +507,7 @@ class TestRemoveTableFields(TestCase):
         payload = self._get_data()
 
         self.assertFalse(any(removed_field_name in elem for elem in payload))
-        self.assertTrue(all(len(elem) == len(self.table_payload['fields']) + 1 for elem in payload), payload)  # also id
+        self.assertTrue(all(len(elem) == len(self.table_payload['fields']) + 1 for elem in payload), payload)  # +1 (id)
 
     def test_remove_all(self):
         self._put_table_data({'fields': []})
