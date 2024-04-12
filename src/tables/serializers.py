@@ -18,7 +18,7 @@ class FieldSerializer(serializers.ModelSerializer):
             case Field.FieldType.boolean:
                 data['default_boolean'] = data.get('default')
             case _:
-                raise ValueError(f'not handled {data["field_type"]}')
+                raise serializers.ValidationError({'field_type': 'invalid choice'})
         return super().to_internal_value(data)
 
 
@@ -35,6 +35,17 @@ class TableSerializer(serializers.ModelSerializer):
 
         if len(set(field['name'] for field in attrs['fields'])) != len(attrs['fields']):
             raise serializers.ValidationError({'fields': 'non unique field names'})
+
+        if instance := getattr(self, 'instance'):
+            incoming_field_by_name = {field['name']: field for field in attrs['fields']}
+
+            for field in instance.fields.all():
+                if (
+                    field.name in incoming_field_by_name
+                    and field.field_type != incoming_field_by_name[field.name]['field_type']
+                ):
+                    raise serializers.ValidationError({'fields': 'change of field type is not permitted'})
+
         return attrs
 
     def create_fields(self, table, fields_data):

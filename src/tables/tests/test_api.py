@@ -402,10 +402,30 @@ class TestUpdateTable(TestCase):
 
         self.assertEqual(len(response_content), num_elems * 3)
         self.assertTrue(all(new_field_name in elem for elem in response_content))
-        # self.assertTrue(all(elem[new_field_name] == default_value for elem in response_content), response_content)
-        # this is a bug
-        # i wanted to handle default values but serializers work in that way
-        # that they do not reflect default value from models field, they will
+        self.assertTrue(all(elem[new_field_name] == default_value for elem in response_content), response_content)
+
+        # BUG
+        # default value if dably assigned to incoming objects
+        # serializers do not apply defaults, they usually assign None to not empty fields
+        # but boolead is casted to False and default True for boolean does not work
+
+    def test_change_of_field_type_is_not_permitted(self):
+
+        response = self.client.put(
+            path=f'/api/table/{self.table.id}/',
+            data={
+                'name': 'new_name',
+                'fields': [
+                    {
+                        'name': 'name',
+                        'type': 'number',
+                    },
+                ]
+            },
+            content_type="application/json",
+        )
+        self.assertContains(response, 'change of field type is not permitted', status_code=400)
+
 
 class TestRemoveTableFields(TestCase):
     example_payloads = [
