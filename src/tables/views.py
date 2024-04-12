@@ -1,4 +1,4 @@
-from rest_framework import views, viewsets, response, status, decorators
+from rest_framework import views, viewsets, response, status, decorators, status
 
 from tables.models import Table, Field
 from tables.serializers import TableSerializer, dynamic_serializer_factory
@@ -6,9 +6,15 @@ from tables import table_build
 
 
 class TableView(viewsets.ModelViewSet):
-    # http_method_names = ['post', 'put'] # TODO
+    http_method_names = ['post', 'put', 'get']
     queryset = Table.objects.prefetch_related('fields')
     serializer_class = TableSerializer
+
+    # def retrieve(self, request, *args, **kwargs):
+    #     return response.Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    # def list(self, request, *args, **kwargs):
+    #     return response.Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
     def create(self, request, *args, **kwargs):
         serializer = TableSerializer(data=request.data)
@@ -45,11 +51,9 @@ class TableView(viewsets.ModelViewSet):
         table.refresh_from_db()
         model_after = table.get_model()
 
-        changes = list(table_build.get_model_changes(model_before, model_after))
-
         table_build.alter_table(
             model=model_after,
-            changes=changes,
+            changes=table_build.get_model_changes(model_before, model_after),
         )
 
         return response.Response(serializer.data)
@@ -69,7 +73,7 @@ class TableView(viewsets.ModelViewSet):
         return response.Response()
 
     @decorators.action(methods=['get'], detail=True, url_path='rows')
-    def fetch_dynamic(self, request, pk=None):
+    def list_dynamic(self, request, pk=None):
         table = self.get_object()
         model = table.get_model()
         serializer_class = dynamic_serializer_factory(model)
