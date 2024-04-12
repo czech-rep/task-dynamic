@@ -17,6 +17,8 @@ class FieldSerializer(serializers.ModelSerializer):
                 data['default_number'] = data.get('default')
             case Field.FieldType.boolean:
                 data['default_boolean'] = data.get('default')
+            case _:
+                raise ValueError(f'not handled {data["field_type"]}')
         return super().to_internal_value(data)
 
 

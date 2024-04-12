@@ -1,7 +1,7 @@
 
 from django.db.models.signals import post_delete
 from django.dispatch import receiver
-
+from django.db.models import loading
 from tables.models import Table, Field
 from tables import table_build
 

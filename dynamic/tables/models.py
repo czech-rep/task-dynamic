@@ -33,14 +33,6 @@ class Field(models.Model):
         db_table = 'table_fields'
         # TODO unique together: field name and table
 
-    def fmt(self):
-        return {
-            'db_column': self.name,
-            'name': self.name,
-            'field_type': self.field_type,
-            'default': self.get_default(),
-        }
-
     def get_default(self):
         """If this returns None, it means that fiels will be mandatory"""
         if self.field_type == self.FieldType.string:
@@ -51,3 +43,30 @@ class Field(models.Model):
             return self.default_boolean
         else:
             raise ValueError(f'unhandled {self.field_type}')
+
+    def attrs(self):
+        result = {
+            'db_column': self.name,
+            'name': self.name,
+        }
+        if self.get_default() is not None:
+            result['default'] = self.get_default()
+            result['null'] = False
+        else:
+            result['null'] = True
+
+        return result
+
+    def as_field_instance(self):
+        match self.field_type:
+            case Field.FieldType.string:
+                field = models.CharField(**self.attrs())
+            case Field.FieldType.number:
+                field = models.IntegerField(**self.attrs())
+            case Field.FieldType.boolean:
+                field = models.BooleanField(**self.attrs())
+            case _:
+                raise ValueError(f'{self.field_type} not handled')
+
+        field.column = field.db_column
+        return field

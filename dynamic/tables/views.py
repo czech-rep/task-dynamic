@@ -57,14 +57,10 @@ class TableView(viewsets.ModelViewSet):
         table.refresh_from_db()
         model_after = table_build.get_model(table)
 
-        models_fields = lambda model: {field.name: field for field in model._meta.fields}
-
-        changes=list(table_build.get_changes(models_fields(model_before), models_fields(model_after)))
-        print(changes)
+        changes = list(table_build.get_model_changes(model_before, model_after))
 
         table_build.alter_table(
             model=model_after,
-            # model=table_build.get_model(table),
             changes=changes,
         )
 
@@ -72,13 +68,18 @@ class TableView(viewsets.ModelViewSet):
 
     @decorators.action(methods=['post'], detail=True, url_path='row')
     def add_dynamic(self, request, pk=None):
-        model = table_build.get_model(self.get_object())
+        table = self.get_object()
+        model = table_build.get_model(table)
+
+        # print([(f.name, f.default, f.null) for f in model._meta.fields])
+
         serializer_class = dynamic_serializer_factory(model)
 
         serializer = serializer_class(data=request.data)
         if not serializer.is_valid():
             return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+        # print('validated_data', serializer.validated_data)
         serializer.save()
         return response.Response()
 
