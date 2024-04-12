@@ -407,7 +407,8 @@ class TestUpdateTable(TestCase):
         # BUG
         # default value if dably assigned to incoming objects
         # serializers do not apply defaults, they usually assign None to not empty fields
-        # but boolead is casted to False and default True for boolean does not work
+        # but empty boolead is casted to False so default True for boolean does not work
+        # in rest_framework/serializers.py#497
 
     def test_change_of_field_type_is_not_permitted(self):
 
