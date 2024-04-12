@@ -13,11 +13,11 @@ class TestCreateTable(TestCase):
                 'fields': [
                     {
                         'name': 'name',
-                        'type': 'string',
+                        'field_type': 'string',
                     },
                     {
                         'name': 'age',
-                        'type': 'number',
+                        'field_type': 'number',
                         'default': 5
                     },
                 ]
@@ -75,11 +75,11 @@ class TestUpdateTable(TestCase):
                 'fields': [
                     {
                         'name': 'name',
-                        'type': 'string',
+                        'field_type': 'string',
                     },
                     {
                         'name': new_field_name,
-                        'type': 'number',
+                        'field_type': 'number',
                     },
                 ]
             },
@@ -105,11 +105,11 @@ class TestUpdateTable(TestCase):
                 'fields': [
                     {
                         'name': 'name',
-                        'type': 'string',
+                        'field_type': 'string',
                     },
                     {
                         'name': new_field_name,
-                        'type': 'number',
+                        'field_type': 'number',
                         'default': default_value
                     },
                 ]
@@ -138,11 +138,11 @@ class TestUpdateTable(TestCase):
                 'fields': [
                     {
                         'name': 'name',
-                        'type': 'string',
+                        'field_type': 'string',
                     },
                     {
                         'name': new_field_name,
-                        'type': 'number',
+                        'field_type': 'number',
                         'default': default_value
                     },
                 ]
@@ -159,11 +159,11 @@ class TestUpdateTable(TestCase):
                 'fields': [
                     {
                         'name': 'name',
-                        'type': 'string',
+                        'field_type': 'string',
                     },
                     {
                         'name': new_field_name,
-                        'type': 'number',
+                        'field_type': 'number',
                         'default': second_default
                     },
                 ]
@@ -191,11 +191,11 @@ class TestUpdateTable(TestCase):
                 'fields': [
                     {
                         'name': 'name',
-                        'type': 'string',
+                        'field_type': 'string',
                     },
                     {
                         'name': new_field_name,
-                        'type': 'number',
+                        'field_type': 'number',
                     },
                 ]
             },
@@ -222,11 +222,11 @@ class TestUpdateTable(TestCase):
                 'fields': [
                     {
                         'name': 'name',
-                        'type': 'string',
+                        'field_type': 'string',
                     },
                     {
                         'name': new_field_name,
-                        'type': 'string',
+                        'field_type': 'string',
                         'default': default_value
                     },
                 ]
@@ -253,11 +253,11 @@ class TestUpdateTable(TestCase):
                 'fields': [
                     {
                         'name': 'name',
-                        'type': 'string',
+                        'field_type': 'string',
                     },
                     {
                         'name': new_field_name,
-                        'type': 'string',
+                        'field_type': 'string',
                     },
                 ]
             },
@@ -285,11 +285,11 @@ class TestUpdateTable(TestCase):
                 'fields': [
                     {
                         'name': 'name',
-                        'type': 'string',
+                        'field_type': 'string',
                     },
                     {
                         'name': new_field_name,
-                        'type': 'boolean',
+                        'field_type': 'boolean',
                         'default': default_value
                     },
                 ]
@@ -317,11 +317,11 @@ class TestUpdateTable(TestCase):
                 'fields': [
                     {
                         'name': 'name',
-                        'type': 'string',
+                        'field_type': 'string',
                     },
                     {
                         'name': new_field_name,
-                        'type': 'boolean',
+                        'field_type': 'boolean',
                     },
                 ]
             },
@@ -348,11 +348,11 @@ class TestUpdateTable(TestCase):
                 'fields': [
                     {
                         'name': 'name',
-                        'type': 'string',
+                        'field_type': 'string',
                     },
                     {
                         'name': new_field_name,
-                        'type': 'boolean',
+                        'field_type': 'boolean',
                     },
                 ]
             },
@@ -374,11 +374,11 @@ class TestUpdateTable(TestCase):
                 'fields': [
                     {
                         'name': 'name',
-                        'type': 'string',
+                        'field_type': 'string',
                     },
                     {
                         'name': new_field_name,
-                        'type': 'boolean',
+                        'field_type': 'boolean',
                         'default': default_value,
                     },
                 ]
@@ -422,16 +422,16 @@ class TestRemoveTableFields(TestCase):
             'fields': [
                 {
                     'name': 'name',
-                    'type': 'string',
+                    'field_type': 'string',
                 },
                 {
                     'name': 'age',
-                    'type': 'number',
+                    'field_type': 'number',
                     'default': 30,
                 },
                 {
                     'name': 'married',
-                    'type': 'boolean',
+                    'field_type': 'boolean',
                     'default': False,
                 },
             ]
@@ -511,7 +511,7 @@ class TestRemoveTableFields(TestCase):
             'fields': [
                 {
                     'name': 'name',
-                    'type': 'string',
+                    'field_type': 'string',
                 }
             ]
         })
