@@ -10,11 +10,11 @@ class TableView(viewsets.ModelViewSet):
     queryset = Table.objects.prefetch_related('fields')
     serializer_class = TableSerializer
 
-    # def retrieve(self, request, *args, **kwargs):
-    #     return response.Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+    def retrieve(self, request, *args, **kwargs):
+        return response.Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
-    # def list(self, request, *args, **kwargs):
-    #     return response.Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+    def list(self, request, *args, **kwargs):
+        return response.Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
     def create(self, request, *args, **kwargs):
         serializer = TableSerializer(data=request.data)
@@ -27,12 +27,6 @@ class TableView(viewsets.ModelViewSet):
         table_build.create_table(model)
 
         return response.Response(serializer.data, status=status.HTTP_201_CREATED)
-
-        # from django.db.models.loading import cache
-        # try:
-        #     del cache.app_models[appname][modelname]
-        # except KeyError:
-        #     pass
 
     def update(self, request, pk, *args, **kwargs):
         try:
