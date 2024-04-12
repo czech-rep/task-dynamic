@@ -10,6 +10,8 @@ class FieldSerializer(serializers.ModelSerializer):
         fields = ['name', 'field_type', 'default_string', 'default_number', 'default_boolean']
 
     def to_internal_value(self, data):
+        data['field_type'] = data.pop('type')
+
         match data['field_type']:
             case Field.FieldType.string:
                 data['default_string'] = data.get('default')
@@ -19,6 +21,7 @@ class FieldSerializer(serializers.ModelSerializer):
                 data['default_boolean'] = data.get('default')
             case _:
                 raise ValueError(f'not handled {data["field_type"]}')
+
         return super().to_internal_value(data)
 
 
