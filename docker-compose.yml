@@ -1,6 +1,10 @@
 volumes:
   local_postgres_data: {}
 
+networks:
+  default:
+    name: dynamic-task
+
 services:
   postgres:
     image:
@@ -11,3 +15,19 @@ services:
       - '5300:5432'
     volumes:
       - local_postgres_data:/var/lib/postgresql/data
+
+  backend:
+    image: task-dynamic
+    build:
+      context: .
+      dockerfile: docker-files/backend/Dockerfile
+    env_file:
+      - .env
+      - .env.docker
+    ports:
+      - '0.0.0.0:8000:8000'
+    volumes:
+      - ./src:/backend
+    entrypoint: ./manage.py runserver 0.0.0.0:8000
+    depends_on:
+      - postgres
