@@ -3,25 +3,6 @@ from django.db import models, connection
 from tables.models import Table, Field
 
 
-# provided Table instance with its Fields
-# we need to assemble Model class and then create and migrate it
-
-
-def get_model(table):
-    attrs = {field.name: field.as_field_instance() for field in table.fields.all()}
-
-    attrs['__module__'] = 'tables.models'
-
-    model = type(
-        table.name,
-        (models.Model, ),
-        attrs,
-    )
-
-    model._meta.db_table = table.name
-
-    return model
-
 
 def get_model_changes(model_before, model_after):
     models_fields = lambda model: {field.name: field for field in model._meta.fields}
@@ -38,9 +19,9 @@ def get_model_changes(model_before, model_after):
     for common_field in model_before.keys() & model_after.keys():
         field_old = model_before[common_field]
         field_new = model_after[common_field]
-        # What change do we handle
+        # Here compare for changes to be handled
         # null
-        # default - but this change is onlu in django model, not in db
+        # default - but this change is only in django model, not in db
         if (
             field_old.null != field_new.null
             or field_old.default != field_new.default

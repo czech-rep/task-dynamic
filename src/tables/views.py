@@ -5,20 +5,8 @@ from tables.serializers import TableSerializer, dynamic_serializer_factory
 from tables import table_build
 
 
-# class RoomViewset(viewsets.ModelViewSet):
-#     http_method_names = ['post', 'put', 'get']
-#     serializer_class = TableSerializer
-
-
-    # def create(self):
-    #     pass
-    # def get_serializer_class(self):
-    #     if self.request.method in ['post', 'put']:
-    #         return table_serializers.CreateTableSerializer
-    #     else:
-    #         return table_serializers.TableSerializer
-
 class TableView(viewsets.ModelViewSet):
+    # http_method_names = ['post', 'put'] # TODO
     queryset = Table.objects.prefetch_related('fields')
     serializer_class = TableSerializer
 
@@ -29,7 +17,7 @@ class TableView(viewsets.ModelViewSet):
             return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         table = serializer.save()
-        model = table_build.get_model(table)
+        model = table.get_model()
         table_build.create_table(model)
 
         return response.Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -50,12 +38,12 @@ class TableView(viewsets.ModelViewSet):
         if not serializer.is_valid():
             return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        model_before = table_build.get_model(table)
+        model_before = table.get_model()
 
         serializer.save()
 
         table.refresh_from_db()
-        model_after = table_build.get_model(table)
+        model_after = table.get_model()
 
         changes = list(table_build.get_model_changes(model_before, model_after))
 
@@ -69,9 +57,7 @@ class TableView(viewsets.ModelViewSet):
     @decorators.action(methods=['post'], detail=True, url_path='row')
     def add_dynamic(self, request, pk=None):
         table = self.get_object()
-        model = table_build.get_model(table)
-
-        # print([(f.name, f.default, f.null) for f in model._meta.fields])
+        model = table.get_model()
 
         serializer_class = dynamic_serializer_factory(model)
 
@@ -79,14 +65,14 @@ class TableView(viewsets.ModelViewSet):
         if not serializer.is_valid():
             return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        # print('validated_data', serializer.validated_data)
         serializer.save()
         return response.Response()
 
     @decorators.action(methods=['get'], detail=True, url_path='rows')
     def fetch_dynamic(self, request, pk=None):
-        model = table_build.get_model(self.get_object())
+        table = self.get_object()
+        model = table.get_model()
         serializer_class = dynamic_serializer_factory(model)
 
-        serializer = serializer_class(model.objects.all(), many=True)
+        serializer = serializer_class(model.objects.order_by('id'), many=True)
         return response.Response(serializer.data)

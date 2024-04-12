@@ -2,8 +2,6 @@ from django.db import models
 
 
 class Table(models.Model):
-    class Meta:
-        pass
 
     @property
     def name(self):
@@ -14,9 +12,24 @@ class Table(models.Model):
             'fields': {field.name: field.fmt() for field in self.fields.all()},
         }
 
+    def get_model(self):
+        attrs = {field.name: field.as_field_instance() for field in self.fields.all()}
+
+        attrs['__module__'] = 'tables.models'
+
+        model = type(
+            self.name,
+            (models.Model, ),
+            attrs,
+        )
+
+        model._meta.db_table = self.name
+
+        return model
+
 class Field(models.Model):
 
-    class FieldType(models.TextChoices): # TODO to TextChoices
+    class FieldType(models.TextChoices):
         string = 'string'
         number = 'number'
         boolean = 'boolean'
@@ -30,11 +43,11 @@ class Field(models.Model):
     default_boolean = models.BooleanField(null=True)
 
     class Meta:
-        db_table = 'table_fields'
-        # TODO unique together: field name and table
+        pass
+        # TODO unique together: field name and table. For now, its validated in serializer
 
     def get_default(self):
-        """If this returns None, it means that fiels will be mandatory"""
+        """If this returns None, it means that fiels has no default value"""
         if self.field_type == self.FieldType.string:
             return self.default_string
         elif self.field_type == self.FieldType.number:
@@ -49,11 +62,11 @@ class Field(models.Model):
             'db_column': self.name,
             'name': self.name,
         }
-        if self.get_default() is not None:
+        if self.get_default() is None:
+            result['null'] = True
+        else:
             result['default'] = self.get_default()
             result['null'] = False
-        else:
-            result['null'] = True
 
         return result
 

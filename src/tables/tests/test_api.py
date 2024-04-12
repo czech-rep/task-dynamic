@@ -67,12 +67,12 @@ class TestUpdateTable(TestCase):
             name='name',
             field_type='string',
         )
-        self.model = table_build.get_model(self.table)
+        self.model = self.table.get_model()
         table_build.create_table(self.model)
 
     def tearDown(self):
         self.table.refresh_from_db()
-        table_build.remove_table(table_build.get_model(self.table))
+        table_build.remove_table(self.table.get_model())
 
     def _post_small_payloads(self):
         response = self.client.post(
