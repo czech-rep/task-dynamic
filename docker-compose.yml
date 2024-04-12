@@ -15,6 +15,12 @@ services:
       - '5300:5432'
     volumes:
       - local_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
 
   backend:
     image: task-dynamic
@@ -30,4 +36,5 @@ services:
       - ./src:/backend
     entrypoint: ./manage.py runserver 0.0.0.0:8000
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy

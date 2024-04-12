@@ -1,5 +1,14 @@
-apply migrations
-
+Start comtainers
 ```sh
-docker compose exec ./manage.py migrate
+docker compose up -d
+```
+
+Apply migrations
+```sh
+docker compose exec backend ./manage.py migrate
+```
+
+Run tests
+```sh
+docker compose exec backend ./manage.py test
 ```
