@@ -38,22 +38,21 @@ class Field(models.Model):
     name = models.CharField()
     field_type = models.CharField(choices=FieldType.choices)
 
-    default_number = models.IntegerField(null=True)
-    default_string = models.CharField(null=True)
-    default_boolean = models.BooleanField(null=True)
+    default = models.CharField(null=True)
 
     class Meta:
         pass
         # TODO unique together: field name and table. For now, its validated in serializer
 
     def get_default(self):
-        """If this returns None, it means that fiels has no default value"""
-        if self.field_type == self.FieldType.string:
-            return self.default_string
+        if self.default is None:  # fiels has no default value
+            return None
+        elif self.field_type == self.FieldType.string:
+            return self.default
         elif self.field_type == self.FieldType.number:
-            return self.default_number
+            return int(self.default)
         elif self.field_type == self.FieldType.boolean:
-            return self.default_boolean
+            return bool(self.default)
         else:
             raise ValueError(f'unhandled {self.field_type}')
 

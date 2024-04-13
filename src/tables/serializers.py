@@ -1,25 +1,46 @@
+from collections import Counter
 from rest_framework import serializers
 
 from tables.models import Table, Field
 
 
+class UniversalField(serializers.Field):
+    def to_representation(self, data):
+        return str(data)
+
+    def to_internal_value(self, data):
+        return str(data)
+
+
 class FieldSerializer(serializers.ModelSerializer):
+    default = UniversalField(required=False)
 
     class Meta:
         model = Field
-        fields = ['name', 'field_type', 'default_string', 'default_number', 'default_boolean']
+        fields = ['name', 'field_type', 'default']
 
-    def to_internal_value(self, data):
-        match data['field_type']:
+    def validate(self, attrs):
+        default = attrs.get('default')
+
+        if default is None:
+            return attrs
+
+        match attrs['field_type']:
             case Field.FieldType.string:
-                data['default_string'] = data.get('default')
+                pass
+
             case Field.FieldType.number:
-                data['default_number'] = data.get('default')
+                if not default.isnumeric():
+                    raise serializers.ValidationError({'default': 'invalid number'})
+
             case Field.FieldType.boolean:
-                data['default_boolean'] = data.get('default')
+                if not default.lower() in ['true', 'false']:
+                    raise serializers.ValidationError({'default': 'invalid boolean'})
+
             case _:
-                raise serializers.ValidationError({'field_type': 'invalid choice'})
-        return super().to_internal_value(data)
+                raise serializers.ValidationError({'field_type': 'invalid field_type'})
+
+        return attrs
 
 
 class TableSerializer(serializers.ModelSerializer):
@@ -36,7 +57,7 @@ class TableSerializer(serializers.ModelSerializer):
         if len(set(field['name'] for field in attrs['fields'])) != len(attrs['fields']):
             raise serializers.ValidationError({'fields': 'non unique field names'})
 
-        if instance := getattr(self, 'instance'):
+        if instanc  e := getattr(self, 'instance'):
             incoming_field_by_name = {field['name']: field for field in attrs['fields']}
 
             for field in instance.fields.all():
@@ -44,7 +65,7 @@ class TableSerializer(serializers.ModelSerializer):
                     field.name in incoming_field_by_name
                     and field.field_type != incoming_field_by_name[field.name]['field_type']
                 ):
-                    raise serializers.ValidationError({'fields': 'change of field type is not permitted'})
+                    raise serializers.ValidationError({'fields': f'change of field type forbidden: {field.name}'})
 
         return attrs
 
@@ -79,8 +100,3 @@ def dynamic_serializer_factory(model_):
         (serializers.ModelSerializer, ),
         {'Meta': Meta},
     )
-
-        # unknown =  self.initial_data.keys() - self.fields.keys()
-        # if unknown:
-        #     raise ValidationError("Unknown field(s): {}".format(", ".join(unknown)))
-        # return attrs
