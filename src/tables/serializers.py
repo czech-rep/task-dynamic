@@ -57,7 +57,7 @@ class TableSerializer(serializers.ModelSerializer):
         if len(set(field['name'] for field in attrs['fields'])) != len(attrs['fields']):
             raise serializers.ValidationError({'fields': 'non unique field names'})
 
-        if instanc  e := getattr(self, 'instance'):
+        if instance := getattr(self, 'instance'):
             incoming_field_by_name = {field['name']: field for field in attrs['fields']}
 
             for field in instance.fields.all():

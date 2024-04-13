@@ -7,11 +7,6 @@ class Table(models.Model):
     def name(self):
         return 'dynamic_table_' + str(self.id).zfill(3)
 
-    def compare_format(self):
-        return {
-            'fields': {field.name: field.fmt() for field in self.fields.all()},
-        }
-
     def get_model(self):
         attrs = {field.name: field.as_field_instance() for field in self.fields.all()}
 

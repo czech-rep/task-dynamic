@@ -15,7 +15,12 @@ http://localhost:8000/api/table/
 
 Run tests
 ```sh
-docker compose exec backend ./manage.py test
+docker compose exec backend coverage run ./manage.py test
+```
+
+Check coverage
+```sh
+docker compose exec backend coverage report
 ```
 
 ----
