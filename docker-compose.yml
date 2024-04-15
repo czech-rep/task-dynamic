@@ -34,7 +34,7 @@ services:
       - '0.0.0.0:8000:8000'
     volumes:
       - ./src:/backend
-    entrypoint: ./manage.py runserver 0.0.0.0:8000
+    entrypoint: /entrypoint.sh
     depends_on:
       postgres:
         condition: service_healthy

@@ -1,11 +1,11 @@
+Create .env file
+```sh
+cp .env.template .env
+```
+
 Start comtainers
 ```sh
 docker compose up -d
-```
-
-Apply migrations
-```sh
-docker compose exec backend ./manage.py migrate
 ```
 
 Visit:
